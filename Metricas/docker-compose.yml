@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  metricas:
+    image: ${DOCKER_REGISTRY-}metricas
+    build:
+      context: .
+      dockerfile: Metricas/Dockerfile
+    ports:
+        - 8080:80
+    networks:
+        - metricas
+  prometheus:
+    image: quay.io/prometheus/prometheus:latest
+    volumes:
+    - ./Metricas/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports: 
+        - 9090:9090
+    networks:
+        - metricas
+  grafana:
+    image: grafana/grafana
+    ports:
+        - 3000:3000
+    networks:
+        - metricas
+networks:
+  metricas:
+    driver: bridge
